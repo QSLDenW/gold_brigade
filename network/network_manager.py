@@ -176,3 +176,42 @@ class NetworkManager:
                 pass
 
             print("Disconnected from server") # Print message indicating disconnection
+
+    # Handle incoming messages from the server
+    def _handle_register_response(self, message):
+        if message.get("status") == "sucess":
+            self.client_id = message.get("client_id")
+            self.connected = True
+            print(f"Registered with server as {self.player_name} (ID: {self.client_id})")
+            self.controller.on_connected_to_server()
+        else:
+            print(f"Registration failed: {message.get('error')}")
+            self.controller.on_connection_error(message.get('message', 'Registration failed'))
+
+    def _handle_game_state(self,message):
+        self.game_state = message
+        self.players = message.get("players", {})
+        self.controller.on_game_stae_updated(message)
+
+    def _handle_game_list(self, message):
+        self.available_games = message.get("games", [])
+        self.controller.on_game_list_updated(self.available_games)
+
+    def _handle_join_response(self, message):
+        if message.get("status") == "sucess":
+            self.game_id = message.get("game_id")
+            self.my_faction = message.get("faction")
+            print(f"Joined game {self.game_id} as {self.my_faction}")
+            self.controller.on_game_joined(message)
+        else:
+            print(f"Failed to join game: {message.get('message')}")
+            self.controller.on_join_game_failed(message.get('message', 'Failed to join game'))
+            
+
+    def _handle_player_joined(self, message):
+        player_name = message.get("player_name")
+        player_id = message.get("player_id")
+        print(f"Player {player_name} (ID: {player_id}) joined the game")
+        self.controller.on_player_joined(player_name, player_id)
+    
+    
