@@ -254,3 +254,4 @@ class NetworkManager:
         status = message.get("status")
         action_message = message.get("message")
         print(f"Action response: {status} - {action_message}")
+        
