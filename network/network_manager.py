@@ -214,4 +214,43 @@ class NetworkManager:
         print(f"Player {player_name} (ID: {player_id}) joined the game")
         self.controller.on_player_joined(player_name, player_id)
     
-    
+    def _handle_player_left(self, message):
+        player_name = message.get("player_name")
+        player_id = message.get("player_id")
+        print(f"Player {player_name}, (ID: {player_id}) left the game")
+        self.controller.on_player_left(player_name, player_id)
+
+    def _handle_game_started(self, message):
+        print(f"Game started! Attacking player: {message.get('first_player')}")
+        self.controller.on_game_started(message)
+
+    def _handle_turn_changed(self, message):
+        player_name = message.get("player_name")
+        player_id = message.get("player_id")
+        turn = message.get("turn")
+        print(f"Turn {turn}: {player_name}'s turn")
+        self.controller.on_turn_changed(player_id, player_name, turn)
+
+    def _handle_unit_moved(self, message):
+        from_pos = message.get("from")
+        to_pos = message.get("to")
+        unit = message.get("unit")
+        print(f"Unit {unit} moved from {from_pos} to {to_pos}")
+        self.controller.on_unit_moved(from_pos, to_pos, unit)
+
+    def _handle_attack_result(self, message):
+        attacker = message.get("attacker")
+        defender = message.get("defender")
+        result = message.get("result")
+        print(f"Attack result: {attacker} attacked {defender}, result: {result}")
+        self.controller.on_attack_result(attacker, defender, result)
+
+    def _handle_game_ended(self, message):
+        reason = message.get("reason")
+        print(f"Game ended: {reason}")
+        self.controller.on_handle_game_ended(reason)
+
+    def _handle_action_response(self, message):
+        status = message.get("status")
+        action_message = message.get("message")
+        print(f"Action response: {status} - {action_message}")
