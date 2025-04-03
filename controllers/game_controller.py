@@ -2,7 +2,7 @@ import pygame
 from models.game_model import GameModel
 from network.network_manager import NetworkManager
 
-class GAmeController:
+class GameController:
     def __init__(self):
         self.model = GameModel()
         self.network = NetworkManager()
